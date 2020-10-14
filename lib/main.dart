@@ -1,14 +1,59 @@
 import 'package:commander_league/views/home.dart';
+import 'package:commander_league/views/loading.dart';
 import 'package:flutter/material.dart';
+
+// Import the firebase_core plugin
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // Set default `_initialized` and `_error` state to false
+  bool _initialized = false;
+  bool _error = false;
+
+  // Define an async function to initialize FlutterFire
+  void initializeFlutterFire() async {
+    try {
+      // Wait for Firebase to initialize and set `_initialized` state to true
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      // Set `_error` state to true if Firebase initialization fails
+      print(e);
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Show error message if initialization failed
+    if (_error) {
+      return Loading();
+    }
+
+    // Show a loader until FlutterFire is initialized
+    if (!_initialized) {
+      return Loading();
+    }
+
     return MaterialApp(
       title: 'Commander League',
       theme: ThemeData(
