@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 // Import the firebase_core plugin
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,12 +19,14 @@ class _MyAppState extends State<MyApp> {
   // Set default `_initialized` and `_error` state to false
   bool _initialized = false;
   bool _error = false;
+  FirebaseAuth auth;
 
   // Define an async function to initialize FlutterFire
   void initializeFlutterFire() async {
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
       await Firebase.initializeApp();
+      auth = FirebaseAuth.instance;
       setState(() {
         _initialized = true;
       });
@@ -72,7 +75,13 @@ class _MyAppState extends State<MyApp> {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Home(title: 'Commander League Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Home(
+              title: 'Commander League Home Page',
+            ),
+        '/loading': (context) => Loading(),
+      },
     );
   }
 }
